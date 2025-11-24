@@ -328,11 +328,6 @@ const scoreColor = computed(() => {
                     </div>
 
                     <!-- 毒舌文案 -->
-                    <!-- <div class="text-area" v-if="!isMentorMode">
-                        <p class="roast-text">{{ displayedRoastText }}</p>
-                    </div> -->
-
-                    <!-- 毒舌文案 -->
                     <div class="text-area" v-if="!isMentorMode">
                         <p class="roast-text">{{ displayedRoastText }}</p>
                     </div>
