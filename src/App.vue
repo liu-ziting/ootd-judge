@@ -167,9 +167,17 @@ const finishAnalysis = async () => {
 
 // --- 5. 结果页逻辑 ---
 
-// const activateMentorMode = () => {
-//     isMentorMode.value = true
-// }
+const activateMentorMode = () => {
+    isMentorMode.value = true
+}
+
+const switchToRoastMode = () => {
+    isMentorMode.value = false
+    // 确保毒舌文本重新显示
+    if (resultData.value?.roast) {
+        displayedRoastText.value = resultData.value.roast
+    }
+}
 
 const resetApp = () => {
     appState.value = 'camera'
@@ -320,6 +328,11 @@ const scoreColor = computed(() => {
                     </div>
 
                     <!-- 毒舌文案 -->
+                    <!-- <div class="text-area" v-if="!isMentorMode">
+                        <p class="roast-text">{{ displayedRoastText }}</p>
+                    </div> -->
+
+                    <!-- 毒舌文案 -->
                     <div class="text-area" v-if="!isMentorMode">
                         <p class="roast-text">{{ displayedRoastText }}</p>
                     </div>
@@ -332,8 +345,9 @@ const scoreColor = computed(() => {
                         <div v-if="!resultData?.mentorAdvice || resultData?.mentorAdvice?.length === 0" class="no-advice-message">🎯 导师建议正在生成中，请稍候...</div>
                     </div>
 
-                    <!-- 求教按钮 -->
-                    <!-- <button v-if="!isMentorMode" class="btn-help" @click="activateMentorMode">🥺 被骂哭了？求求 AI 教我... <span>👉</span></button> -->
+                    <!-- 模式切换按钮 -->
+                    <button v-if="!isMentorMode" class="btn-help" @click="activateMentorMode">🥺 被骂哭了？求求 AI 教我... <span>👉</span></button>
+                    <button v-else class="btn-help" @click="switchToRoastMode">😈 还是毒舌模式更带劲！ <span>👈</span></button>
 
                     <div class="btn-group">
                         <button class="action-btn" @click="resetApp">RETRY / 再来一次</button>
