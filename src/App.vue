@@ -178,11 +178,21 @@ const activateMentorMode = () => {
 const resetApp = () => {
     appState.value = 'camera'
     displayedRoastText.value = ''
+    capturedImage.value = '' // 清空已捕获的图片
+    resultData.value = null // 清空结果数据
+
+    // 重置文件输入框
+    if (fileInputRef.value) {
+        fileInputRef.value.value = ''
+    }
+
     // 如果之前是摄像头模式，重新打开摄像头
-    if (isUsingCamera.value || !capturedImage.value) {
+    if (isUsingCamera.value) {
         initCamera()
     } else {
-        // 保持上传模式，不重新 initCamera，但用户可以点上传按钮切图
+        // 如果是上传模式，重置为摄像头模式
+        isUsingCamera.value = true
+        initCamera()
     }
 }
 
