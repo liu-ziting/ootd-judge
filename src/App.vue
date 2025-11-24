@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useOOTDJudge, type AdviceData } from './composables/useOOTDJudge'
 
 // --- 状态管理 ---
