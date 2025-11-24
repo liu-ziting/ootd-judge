@@ -31,17 +31,17 @@ const { getAIJudgment, isLoading } = useOOTDJudge()
 // --- 1. 摄像头逻辑 ---
 
 const initCamera = async () => {
-    // 停止旧流
-    if (stream.value) {
-        stream.value.getTracks().forEach(track => track.stop())
-    }
+    if (stream.value) stream.value.getTracks().forEach(t => t.stop())
 
     try {
+        // 技巧：在移动端，通常请求“横向的高分辨率”会让底层驱动提供最广的视角
+        // 然后浏览器会自动旋转它。如果你强制请求 height: 1920，某些安卓机会强制裁切中心区域。
         const constraints = {
             video: {
                 facingMode: currentFacingMode.value,
-                width: { ideal: 1280 },
-                height: { ideal: 1920 }
+                // 请求 1080p 或 4K 级别的输入，这能获得摄像头最大的视场角 (FOV)
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
             },
             audio: false
         }
@@ -50,15 +50,11 @@ const initCamera = async () => {
 
         if (videoRef.value) {
             videoRef.value.srcObject = stream.value
-            // 必须显式 play，防止部分浏览器黑屏
             videoRef.value.play()
         }
-
         isUsingCamera.value = true
-        triggerToast(currentFacingMode.value === 'user' ? '自拍模式' : '后摄模式')
     } catch (err) {
-        console.error('Camera Error:', err)
-        alert('无法访问摄像头')
+        console.error(err)
     }
 }
 
@@ -434,7 +430,10 @@ video,
 .preview-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* 将 cover 改为 contain，会完整显示画面，但可能有黑边 */
+    /* object-fit: cover;  <-- 原来的（会放大裁剪） */
+    object-fit: contain; /* <-- 修改后（完整显示，不放大） */
+    background: #000; /* 留白部分显示黑色 */
 }
 .preview-img {
     object-fit: contain;
