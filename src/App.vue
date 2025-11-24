@@ -26,7 +26,7 @@ const resultData = ref<AdviceData | null>(null)
 const displayedRoastText = ref('')
 
 // AI 接口
-const { getAIJudgment, isLoading } = useOOTDJudge()
+const { getAIJudgment } = useOOTDJudge()
 
 // --- 1. 摄像头逻辑 ---
 
@@ -167,9 +167,9 @@ const finishAnalysis = async () => {
 
 // --- 5. 结果页逻辑 ---
 
-const activateMentorMode = () => {
-    isMentorMode.value = true
-}
+// const activateMentorMode = () => {
+//     isMentorMode.value = true
+// }
 
 const resetApp = () => {
     appState.value = 'camera'
@@ -235,11 +235,11 @@ const getMockResult = (): AdviceData => {
 }
 
 // Toast 辅助
-const triggerToast = (msg: string) => {
-    toastMessage.value = msg
-    showToast.value = true
-    setTimeout(() => (showToast.value = false), 1500)
-}
+// const triggerToast = (msg: string) => {
+//     toastMessage.value = msg
+//     showToast.value = true
+//     setTimeout(() => (showToast.value = false), 1500)
+// }
 
 // 启动
 onMounted(() => {
