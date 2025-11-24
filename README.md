@@ -1,34 +1,73 @@
-# OOTD JUDGE - Vue 3 + TypeScript 版本
+# OOTD JUDGE - AI 毒舌穿搭审判
 
-这是一个将原始 HTML+JS 项目转换为 Vue 3 + TypeScript 的项目。
+一个基于 Vue 3 + TypeScript 的智能穿搭评价应用，通过 AI 技术对用户的穿搭进行毒舌式评价和专业建议。
 
-## 项目结构
+## 🎯 项目简介
+
+OOTD JUDGE 是一个有趣的穿搭评价应用，结合了：
+
+-   **毒舌模式**：幽默犀利的吐槽式评价
+-   **导师模式**：专业温和的改进建议
+-   **AI 智能分析**：基于智谱 AI 的视觉分析能力
+-   **双模式切换**：满足不同用户需求
+
+## ✨ 核心功能
+
+### 📸 图片获取
+
+-   **实时摄像头**：支持前后摄像头切换，自动镜像处理
+-   **图片上传**：支持从相册选择图片
+-   **智能预览**：图片自动适配显示
+
+### 🤖 AI 智能分析
+
+-   **智谱 AI 集成**：使用 GLM-4.1V-Thinking-Flash 模型
+-   **双重评价模式**：
+    -   **毒舌模式**：幽默犀利的吐槽，评分从 A+ 到 F
+    -   **导师模式**：专业详细的改进建议
+-   **备用数据**：API 不可用时自动使用预设数据
+
+### 🎨 用户体验
+
+-   **动态分析动画**：扫描网格 + 进度条效果
+-   **打字机效果**：逐字显示评价内容
+-   **响应式设计**：适配移动端和桌面端
+-   **状态管理**：清晰的拍照 → 分析 → 结果流程
+
+## 🛠️ 技术栈
+
+-   **前端框架**：Vue 3 (Composition API)
+-   **开发语言**：TypeScript
+-   **构建工具**：Vite
+-   **样式方案**：原生 CSS3 + CSS 变量
+-   **AI 服务**：智谱 AI (GLM-4.1V-Thinking-Flash)
+
+## 📁 项目结构
 
 ```
 ootd-judge/
 ├── src/
-│   ├── App.vue          # 主组件
-│   ├── main.ts          # 应用入口
-│   ├── style.css        # 样式文件
-│   └── vue-shims.d.ts   # Vue 类型声明
-├── index.html           # HTML 入口
-├── package.json         # 项目配置
-├── vite.config.ts       # Vite 配置
-├── tsconfig.json        # TypeScript 配置
-└── tsconfig.node.json   # Node.js TypeScript 配置
+│   ├── App.vue                    # 主应用组件
+│   ├── main.ts                    # 应用入口
+│   ├── style.css                  # 全局样式
+│   ├── vue-shims.d.ts             # Vue 类型声明
+│   └── composables/
+│       └── useOOTDJudge.ts        # AI 分析逻辑
+├── index.html                     # HTML 入口
+├── package.json                   # 项目配置
+├── vite.config.ts                 # Vite 配置
+├── tsconfig.json                  # TypeScript 配置
+└── tsconfig.node.json             # Node.js TypeScript 配置
 ```
 
-## 功能特性
+## 🚀 快速开始
 
--   ✅ 摄像头访问和切换
--   ✅ 图片上传功能
--   ✅ 拍照/处理功能
--   ✅ 模拟 AI 分析过程
--   ✅ 结果展示（毒舌模式和导师模式）
--   ✅ 打字机效果
--   ✅ 完整的 UI 样式保持
+### 环境要求
 
-## 开发
+-   Node.js 16+
+-   现代浏览器（支持摄像头 API）
+
+### 安装与运行
 
 ```bash
 # 安装依赖
@@ -44,23 +83,67 @@ npm run build
 npm run preview
 ```
 
-## 技术栈
+### AI 配置
 
--   Vue 3 (Composition API)
--   TypeScript
--   Vite
--   CSS3 (保持原样)
+1. 复制 `.env.example` 文件为 `.env`
+2. 在智谱 AI 平台获取 API Key
+3. 在 `.env` 文件中配置：
 
-## 与原项目的区别
+```
+VITE_AI_API_KEY=your_zhipu_api_key_here
+```
 
--   使用 Vue 3 Composition API 重构
--   添加 TypeScript 类型支持
--   使用 Vite 作为构建工具
--   组件化架构
--   更好的代码组织和维护性
+## 🎮 使用说明
 
-## 注意事项
+### 基本流程
 
--   所有样式和功能都保持与原项目完全一致
--   摄像头功能需要 HTTPS 环境或 localhost
--   图片上传功能支持常见图片格式
+1. **选择图片源**：使用摄像头拍照或上传图片
+2. **开始分析**：点击快门按钮开始 AI 分析
+3. **查看结果**：
+    - 毒舌模式：幽默犀利的吐槽评价
+    - 导师模式：专业的改进建议（点击求教按钮）
+4. **重新开始**：点击"再来一次"清空数据重新开始
+
+### 功能特性
+
+-   **摄像头切换**：前后摄像头自由切换
+-   **图片预览**：上传图片实时预览
+-   **状态重置**：再来一次时自动清空所有数据
+-   **离线备用**：AI 服务不可用时使用预设数据
+
+## 🔧 开发特性
+
+### 代码质量
+
+-   **TypeScript**：完整的类型安全
+-   **Composition API**：现代化的 Vue 开发模式
+-   **模块化设计**：清晰的逻辑分离
+-   **错误处理**：完善的异常处理机制
+
+### 性能优化
+
+-   **懒加载**：按需加载 AI 服务
+-   **资源清理**：及时释放摄像头资源
+-   **状态管理**：响应式状态管理
+
+## 📱 浏览器兼容性
+
+-   Chrome 90+
+-   Firefox 88+
+-   Safari 14+
+-   Edge 90+
+
+## ⚠️ 注意事项
+
+-   **HTTPS 要求**：摄像头功能需要 HTTPS 环境或 localhost
+-   **API 限制**：智谱 AI 有调用频率限制
+-   **图片格式**：支持常见图片格式（JPEG、PNG、WebP）
+-   **移动端优化**：针对移动设备进行了专门优化
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request 来改进项目！
+
+## 📄 许可证
+
+MIT License
