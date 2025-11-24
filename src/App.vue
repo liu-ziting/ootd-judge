@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
-
-// --- 类型定义 ---
-interface AdviceData {
-    score: string
-    roast: string
-    advice: string[]
-}
+import { useOOTDJudge, type AdviceData } from './composables/useOOTDJudge'
 
 // --- 状态管理 ---
 const currentFacingMode = ref<'user' | 'environment'>('user')
@@ -30,6 +24,9 @@ const showToast = ref(false)
 const resultData = ref<AdviceData | null>(null)
 // 打字机效果显示的文本
 const displayedRoastText = ref('')
+
+// AI 接口
+const { getAIJudgment, isLoading } = useOOTDJudge()
 
 // --- 1. 摄像头逻辑 ---
 
@@ -153,13 +150,23 @@ const startAnalysis = () => {
     }, 2500)
 }
 
-const finishAnalysis = () => {
-    resultData.value = getMockResult()
-    appState.value = 'result'
-    // 重置 UI 状态
-    isMentorMode.value = false
-    // 启动打字机
-    typeWriter(resultData.value.roast)
+const finishAnalysis = async () => {
+    try {
+        const aiResult = await getAIJudgment(capturedImage.value)
+        resultData.value = aiResult
+        appState.value = 'result'
+        // 重置 UI 状态
+        isMentorMode.value = false
+        // 启动打字机
+        typeWriter(resultData.value.roast)
+    } catch (error) {
+        console.error('AI分析失败:', error)
+        // 如果AI调用失败，使用备用逻辑
+        resultData.value = getMockResult()
+        appState.value = 'result'
+        isMentorMode.value = false
+        typeWriter(resultData.value.roast)
+    }
 }
 
 // --- 5. 结果页逻辑 ---
@@ -195,7 +202,7 @@ const typeWriter = (text: string) => {
     type()
 }
 
-// Mock 数据
+// Mock 数据（备用）
 const getMockResult = (): AdviceData => {
     const data: AdviceData[] = [
         {
@@ -204,7 +211,7 @@ const getMockResult = (): AdviceData => {
             advice: [
                 '提升精神气：把上衣塞进去，或者换一件修身一点的版型。',
                 '色彩管理：全身上下颜色有点杂，试着把鞋子换成和上衣呼应的颜色。',
-                '细节加分：戴个帽子或者整理一下发型，让整体看起来是‘刻意慵懒’而不是‘真邋遢’。'
+                '细节加分：戴个帽子或者整理一下发型，让整体看起来是‘刻意慵懒’而不是‘真邋遢》。'
             ]
         },
         {
@@ -214,7 +221,7 @@ const getMockResult = (): AdviceData => {
         },
         {
             score: 'D',
-            roast: '典型的‘用力过猛’。身上的 Logo 太多了，你是想当行走的广告牌吗？这种混搭风格很大胆，但并不是好的那种大胆。',
+            roast: '典型的‘用力过猛》。身上的 Logo 太多了，你是想当行走的广告牌吗？这种混搭风格很大胆，但并不是好的那种大胆。',
             advice: ['做减法：全身上下只保留一个重点 Logo，其他的换成素色。', '统一色调：裤子颜色太跳跃，换成深灰或牛仔蓝。', '自信一点：你的姿态比衣服更僵硬，放松肩膀。']
         }
     ]
@@ -313,13 +320,14 @@ const scoreColor = computed(() => {
 
                     <!-- 导师建议列表 -->
                     <div class="advice-list" v-else>
-                        <div v-for="(tip, index) in resultData?.advice" :key="index" class="advice-item fade-in" :style="{ animationDelay: `${index * 0.1}s` }">
+                        <div v-for="(tip, index) in resultData?.mentorAdvice" :key="index" class="advice-item fade-in" :style="{ animationDelay: `${index * 0.1}s` }">
                             <span class="tip-index">Tip {{ index + 1 }}:</span> {{ tip }}
                         </div>
+                        <div v-if="!resultData?.mentorAdvice || resultData?.mentorAdvice?.length === 0" class="no-advice-message">🎯 导师建议正在生成中，请稍候...</div>
                     </div>
 
                     <!-- 求教按钮 -->
-                    <button v-if="!isMentorMode" class="btn-help" @click="activateMentorMode">🥺 被骂哭了？求求 AI 教我... <span>👉</span></button>
+                    <!-- <button v-if="!isMentorMode" class="btn-help" @click="activateMentorMode">🥺 被骂哭了？求求 AI 教我... <span>👉</span></button> -->
 
                     <div class="btn-group">
                         <button class="action-btn" @click="resetApp">RETRY / 再来一次</button>
@@ -667,6 +675,16 @@ video,
 }
 .btn-help:active {
     background: #eee;
+}
+
+.no-advice-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin: 10px 0;
 }
 
 .btn-group {
