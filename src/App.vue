@@ -338,7 +338,7 @@ const scoreColor = computed(() => {
                     </div>
 
                     <!-- 导师建议列表 -->
-                    <div class="advice-list" v-else>
+                    <div class="advice-list" v-if="isMentorMode">
                         <div v-for="(tip, index) in resultData?.mentorAdvice" :key="index" class="advice-item fade-in" :style="{ animationDelay: `${index * 0.1}s` }">
                             <span class="tip-index">Tip {{ index + 1 }}:</span> {{ tip }}
                         </div>
