@@ -1,0 +1,410 @@
+:root {
+    --primary: #000000;
+    --text: #ffffff;
+    --accent: #ff3b30;
+    /* 毒舌红 */
+    --accent-mentor: #00d2d3;
+    /* 导师青 */
+    --cyan: #00f2ff;
+    --font-mono: 'Courier New', monospace;
+    --font-serif: 'Times New Roman', serif;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    background-color: var(--primary);
+    color: var(--text);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === 顶部标题栏 (新增) === */
+.app-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+    z-index: 25;
+    /* 比控件高 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    /* 让点击穿透，不影响触摸 */
+    padding-top: 10px;
+}
+
+.title-main {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: 1.8rem;
+    letter-spacing: 4px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.title-sub {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-top: 2px;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* === 相机容器 === */
+.camera-wrapper {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    background: #111;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.uploaded-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+    background: #000;
+}
+
+/* 取景框UI (微调位置，避开标题) */
+.viewfinder-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.border-corner {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.tl {
+    top: 80px;
+    left: 20px;
+    border-width: 2px 0 0 2px;
+}
+
+/* 下移避开标题 */
+.tr {
+    top: 80px;
+    right: 20px;
+    border-width: 2px 2px 0 0;
+}
+
+.bl {
+    bottom: 20px;
+    left: 20px;
+    border-width: 0 0 2px 2px;
+}
+
+.br {
+    bottom: 20px;
+    right: 20px;
+    border-width: 0 2px 2px 0;
+}
+
+/* Toast 提示 */
+.top-toast {
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* === 底部操作栏 === */
+.controls {
+    height: 140px;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 20;
+    padding-bottom: 20px;
+    border-top: 1px solid #222;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: transform 0.1s;
+}
+
+.icon-btn:active {
+    transform: scale(0.9);
+    opacity: 1;
+}
+
+.icon-btn svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+}
+
+.shutter-btn {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 4px solid white;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+}
+
+.shutter-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 62px;
+    height: 62px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.1s;
+}
+
+.shutter-btn:active::after {
+    width: 55px;
+    height: 55px;
+    background: var(--accent);
+}
+
+/* === 结果页 === */
+.result-card {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    z-index: 40;
+    flex-direction: column;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.result-img-box {
+    flex: 5;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 4px solid var(--accent);
+    transition: border-color 0.5s;
+}
+
+.result-img-box.mentor-mode {
+    border-bottom-color: var(--accent-mentor);
+}
+
+.result-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.badge-score {
+    position: absolute;
+    bottom: -30px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    font-family: var(--font-serif);
+    font-weight: bold;
+    border: 4px solid white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    transform: rotate(-10deg);
+    z-index: 5;
+    transition: all 0.5s;
+}
+
+.badge-score.mentor-mode {
+    background: var(--accent-mentor) !important;
+    transform: rotate(0deg);
+}
+
+.result-content {
+    flex: 5;
+    background: white;
+    color: black;
+    padding: 40px 25px 30px 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.roast-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    font-weight: 600;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.advice-list {
+    display: none;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #333;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.advice-item {
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 5px;
+}
+
+.btn-help {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 20px;
+    background: #f8f8f8;
+    border: none;
+    border-left: 4px solid var(--accent);
+    text-align: left;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.btn-help:active {
+    background: #eee;
+}
+
+.btn-help.hidden {
+    display: none;
+}
+
+/* 现在的按钮是全宽的 */
+.btn-group {
+    display: flex;
+    margin-top: auto;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    font-weight: 900;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    background: black;
+    color: white;
+    text-transform: uppercase;
+}
+
+.action-btn:active {
+    background: #333;
+}
+
+/* HUD 分析层 */
+.analyzing-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 30;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.scan-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 242, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridScroll 20s linear infinite;
+}
+
+@keyframes gridScroll {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 0 100%;
+    }
+}
+
+.status-text {
+    color: var(--cyan);
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    border: 1px solid var(--cyan);
+}
+
+.file-input {
+    display: none;
+}
