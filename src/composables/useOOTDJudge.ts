@@ -160,10 +160,15 @@ export function useOOTDJudge() {
                     return fallbackData[randomIndex]
                 }
 
-                // 确保 mentorAdvice 存在，如果没有则使用 advice
-                if (!parsedResult.mentorAdvice) {
-                    console.warn('AI返回数据缺少mentorAdvice，使用advice作为替代')
-                    parsedResult.mentorAdvice = parsedResult.advice
+                // 确保 mentorAdvice 存在，如果没有则使用 advice 或生成默认建议
+                if (!parsedResult.mentorAdvice || parsedResult.mentorAdvice.length === 0) {
+                    console.warn('AI返回数据缺少mentorAdvice，生成默认导师建议')
+                    parsedResult.mentorAdvice = [
+                        '优化版型：选择合身剪裁的单品，避免过于宽松或紧身',
+                        '色彩协调：建立基础色系搭配，减少颜色冲突',
+                        '细节提升：通过配饰和细节增加整体精致度',
+                        '风格统一：确保所有单品在风格上保持一致'
+                    ]
                 }
 
                 console.log('解析后的AI数据:', parsedResult)
